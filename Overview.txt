@@ -1,0 +1,13 @@
+Project Ideas:
+
+Song to image:
+First thing, the user will log into their music app account ( it will be specified later )then they have to choose a song which they want to convert to an image.
+An IA will analyze the song’s lyrics and using an image generator it will produce a photo that represents the song’s lyrics.
+
+A wardrobe generator:
+The user will input their skin tone, height, weight, occasion, season, vibe, etc and an IA will generate an outfit for them.
+It will check the availability of clothing in famous brands (e.g. Zara, H&M,..) and it will output a full outfit with the links to where to get them at.  
+
+
+
+
