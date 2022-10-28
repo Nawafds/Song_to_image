@@ -1,0 +1,9 @@
+Library access story:
+
+Once logged in (as mentioned in the sign-in/ signup stories), in the right corner a user picture will appear 
+(mentioned in the user options story below). Once clicked on the user picture many options will appear, one of 
+them is “View Library” option. Clicking on this button will direct the user to a different page that contains all
+the generated pictures the user decided to save. The pictures will appear as icons by default but they can be organized 
+also as lists or sorted by name or date. Each icon in the library is clickable, and once clicked, the chosen picture will 
+expand. Beside the picture, many options will appear: download, delete, and share. The “share” option will show the user many 
+options, such as share in Twitter, SnapChat, Whatsapp, and other popular applications according to the user’s device’s settings.
