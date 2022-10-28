@@ -1,0 +1,9 @@
+Sign in story
+
+When the user first accesses the website, there will be a login screen. This will include a space titled 
+“Username or email address” and a space titled “Password” at the top of the screen in which the user can 
+input their login information. If the user has forgotten their username/email, password, or both, there 
+will be a “forgot username/password” button that will take the user to a different screen. This screen will
+allow the user to enter either their email or username and will send an email to the user that allows them to 
+reset their username and/or password. If the user does not already have an account, there will be a button to
+sign up towards the bottom of the screen that is explained in the sign up story later in this document. 
