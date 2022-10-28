@@ -1,0 +1,6 @@
+Search story 
+
+When the user gains access to their music app account they have the choice to search a song from their playlist or they can 
+search a song that is not saved to their playlist. When the song is found the program will take the lyrics and send them to 
+the AI to produce a picture. If the lyrics are not found then the program will send an error message notifying the user that 
+the lyrics are not found. If the song is not found an error message will show notifying the user that the song is not found. 	
