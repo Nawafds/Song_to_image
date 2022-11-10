@@ -1,5 +1,6 @@
-import requests
 import json
+import requests
+
 
 def Lyrics(artist, song):
     #
