@@ -3,22 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <title>Lyrics Search</title>
-    <link rel="stylesheet" href="lyrics_search.css">
+    <!-- <link rel="stylesheet" href="../static/style/lyrics_search.css"> -->
+
+    <link rel="stylesheet">
 </head>
 <body>
     <header>
-        <h1>Search for lyrics</h1>
-        <form action="" method="post">
-            <label for="name">Song:</label>
-            <input type="text" id="name" name="name" placeholder="name">
-            <label for="username">Artist:</label>
-            <input type="text" id="username" name="username" placeholder="username">
-            <button type="submit">Search song</button>
-        </form>
+        <br>
+        <h1>Search for a song</h1>
+        <form action="" method="post" class="search-bar" autocomplete="off">
+          <input type="search" id="name" name="name" pattern=".*\S.*" required>
+          <button class="search-btn" type="submit"><span>Search</span></button>
+      </form>
     </header>
+    <h1>Results will be displayed here in a second</h1>
 
-    <section class="result" id="result">
-        <h1>Results will be displayed here in a second...</h1>
-    </section>
+    <h1>{{ variable }}</h1>
+
+    <!-- <section class="result" id="result">
+        <h1>Results will be displayed here in a second</h1>
+    </section> -->
 </body>
 </html>
