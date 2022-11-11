@@ -1,0 +1,20 @@
+Question) A document explaining why you chose the technology stack that you are demonstrating; 
+I’d like the team to consider a minimum of two technology stacks (Node, Django, etc). 
+Describe the process and reasoning the team used to select the stack, and explain why 
+you chose it over the other. The doc should be added to your ‘docs’ folder on github.
+
+Answer)
+In our prototype, we used Flask as a backend framework and Python as a programming language.
+In summary, our project searches for the lyrics of the specified song and then generates an image 
+that represents that song; hence, we have to ensure that our application is not heavy and is able to 
+find and generate results as fast as possible. Therefore, as a backend framework, we thought that Flask
+would be most suitable because it provides a built-in environment with a quick debugging process, which 
+will allow us to find common ground between our skills and knowledge and provide an easy-fix approach in 
+case of any future complications. Along with the fact that is it light weighted, which will provide our 
+application quick assistance since the API generating the resulted image would have its own heavy weight, 
+so we thought we could make up for its weight by using Flask that supports the API in contrast to Django is
+used mainly for more complex projects. The other thing we used is Python as the primary programming language 
+in the backend. The reason behind using it is also to cover the knowledge and experience gap we have in our 
+group since we all know how to use python, and because it is Flask’s supported programming language. Also, 
+in our prototype, we used the Requests library that is being called by our python code to send HTTP requests 
+that return all the data needed to be displayed to the user.
