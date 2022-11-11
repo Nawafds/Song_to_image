@@ -12,9 +12,11 @@ def Lyrics(song):
     response = requests.request("GET", url, headers=headers, data=payload)
 
     getTrackId = json.loads(response.text)
-    getTrackId = int(getTrackId["message"]["body"]["track_list"][0]["track"]["track_id"])
-    
- 
+
+    if(int(getTrackId["message"]["header"]["available"])== 0):
+        return "No lyrics found"
+
+    getTrackId = int(getTrackId["message"]["body"]["track_list"][0]["track"]["track_id"]) 
     url = f"http://api.musixmatch.com/ws/1.1/track.lyrics.get?track_id={getTrackId}&apikey=b653a9863936de49ed3087828dcafe54"
 
     payload = {}
@@ -22,11 +24,23 @@ def Lyrics(song):
 
     response = requests.request("GET", url, headers=headers, data=payload)
 
-    getLyrics = json.loads(response.text)
-    getLyrics = getLyrics["message"]["body"]["lyrics"]["lyrics_body"]
-   
-    return getLyrics
 
+    getLyrics = json.loads(response.text)
+    
+    if int(getLyrics["message"]["header"]["status_code"]) != 200:
+        return "No lyrics found"
+
+    getLyrics = getLyrics["message"]["body"]["lyrics"]["lyrics_body"]
+    
+    result = ""
+    for i in getLyrics:
+        if i == ".":
+            result = result[0:len(result) - 1]
+            result += "."
+            break
+        else:
+            result += i
+    return result
 
 app = Flask(__name__)
 @app.route('/', methods=['GET', 'POST']
