@@ -1,4 +1,5 @@
-Question) A document explaining why you chose the technology stack that you are demonstrating; 
+Question) 
+A document explaining why you chose the technology stack that you are demonstrating; 
 I’d like the team to consider a minimum of two technology stacks (Node, Django, etc). 
 Describe the process and reasoning the team used to select the stack, and explain why 
 you chose it over the other. The doc should be added to your ‘docs’ folder on github.
