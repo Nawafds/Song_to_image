@@ -99,14 +99,11 @@ def home():
         data = io.BytesIO()
         im.save(data, "JPEG")
         encoded_img_data = base64.b64encode(data.getvalue())
-
         return render_template("lyrics_search.html",variable = f"{song_lyrics}", img_data=encoded_img_data.decode('utf-8'), song_name = name )
     return render_template("lyrics_search.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
 
-
-# getImg("nice big breats")
 
 
