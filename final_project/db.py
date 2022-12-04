@@ -49,7 +49,10 @@ def findImage(id):
     return records
 
 def downloadImg(records):
-    print(records)
     for i in records:
-        convert_data(i[0], i[1] + ".png")
+        convert_data(i[0],  "user_1/"+i[1] + ".png")
 
+
+
+
+downloadImg(findImage(1))

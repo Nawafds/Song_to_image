@@ -11,6 +11,7 @@ from IPython.display import display
 from PIL import Image
 from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
+import db
 
 
 def Lyrics(song):
@@ -88,13 +89,14 @@ app = Flask(__name__)
 
 def home():
     if request.method == 'POST':
-        name = request.form.get('name')
+
+        name = request.form.get('name1')
 
         song_lyrics = Lyrics(name)
 
         getImg(song_lyrics, name)
 
-
+        db.addUserImg(counter,name,1, db.convertToBinaryData("photos/" + name + ".png"))
         im = Image.open("photos/" + name + ".png")
         data = io.BytesIO()
         im.save(data, "JPEG")
@@ -106,6 +108,4 @@ def home():
 if __name__ == "__main__":
     app.run(debug=True)
 
-#168.5
 
-#173
