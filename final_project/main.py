@@ -65,23 +65,20 @@ def Lyrics(song):
 
 
 def getImg(keyWords, name):
-    # NB: host url is not prepended with \"https\" nor does it have a trailing slash.
     os.environ['STABILITY_HOST'] = 'grpc.stability.ai:443'
 
-    # To get your API key, visit https://beta.dreamstudio.ai/membership
     os.environ['STABILITY_KEY'] = 'sk-ZW2FwVJtzNT6wlBdQEw7vAcpVLHXXzwgIeGwA3A5aaOvvUt1'
 
     stability_api = client.StabilityInference(
         key=os.environ['STABILITY_KEY'],
         verbose=True, )
 
-    # the object returned is a python generator
     answers = stability_api.generate(
         prompt=keyWords,
-        seed=34567,  # if provided, specifying a random seed makes results deterministic
-        steps=30, )  # defaults to 50 if not specified
+        seed=34567,
+        steps=30, )
 
-    # iterating over the generator produces the api response
+
     for resp in answers:
         for artifact in resp.artifacts:
             if artifact.finish_reason == generation.FILTER:
@@ -111,7 +108,6 @@ def find_img():
             data = io.BytesIO()
             im.save(data, "JPEG")
             encoded_img_data = base64.b64encode(data.getvalue())
-            # return render_template("lyrics_search.html",msg = f"{song_lyrics}", img_data=encoded_img_data.decode('utf-8'), song_name = name )
 
             return render_template("home.html", msg=f"{song_lyrics}", img_data=encoded_img_data.decode('utf-8'))
     return render_template("home.html")
@@ -133,7 +129,7 @@ def login():
             msg = 'Logged in successfully!'
             return redirect('/home')
         else:
-            # Account doesnt exist or username/password incorrect
+
             msg = 'Incorrect username/password!'
 
         print(username, password)
@@ -156,17 +152,32 @@ def home():
 
 @app.route('/profile')
 def profile():
-    # Check if user is loggedin
     if 'loggedin' in session:
-        # We need all the account info for the user so we can display it on the profile page
         mycursor.execute("SELECT * FROM Users WHERE Username = %s AND password = %s", (session["username"], session['password']))
         account = mycursor.fetchone()
         print(account[0])
 
-        # Show the profile page with account info
         return render_template('profile.html', username=account[0], password = account[1], email = account[2])
-    # User is not loggedin redirect to login page
     return redirect(url_for('login'))
+
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    msg = ""
+    if request.method == 'POST':
+        username = request.form.get("username")
+        password = request.form.get("password")
+        email = request.form.get("email")
+
+        mycursor.execute("SELECT * FROM Users WHERE Username = %s", (username,))
+        account = mycursor.fetchone()
+        if account:
+            msg = 'Username already taken!'
+        else:
+            mycursor.execute("INSERT INTO Users (Username, password, email) VALUES (%s,%s,%s)", (username,password, email))
+            mydb.commit()
+            msg = 'Sign up successfully proceed to login'
+
+    return render_template("signup.html",msg= msg)
 
 
 if __name__ == "__main__":

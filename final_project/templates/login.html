@@ -3,7 +3,6 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Login</title>
-{#		<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">#}
         <link rel="stylesheet" href="../static/style/style.css">
 
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
@@ -12,10 +11,10 @@
 		<div class="login">
 			<h1>Login</h1>
 			<div class="links">
-				<a href="{{ url_for('login') }}" class="active">Login</a>
-				<a href="#">Register</a>
+				<a href="{{ url_for('login') }}" class="active" >Login </a>
+				<a href="{{ url_for('signup') }}" >Sign up</a>
 			</div>
-			<form action="{{ url_for('login') }}" method="post">
+			<form action="{{ url_for('login') }}" method="post"  autocomplete="off">
 				<label for="username">
 					<i class="fas fa-user"></i>
 				</label>
