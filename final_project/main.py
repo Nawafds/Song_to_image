@@ -23,7 +23,6 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
-
 def Lyrics(song):
     artist = ""
     url = f"http://api.musixmatch.com/ws/1.1/track.search?q_artist={artist}&page_size=1&page=1&s_track_rating=desc&apikey=b653a9863936de49ed3087828dcafe54&q_track={song}"
@@ -67,7 +66,7 @@ def Lyrics(song):
 def getImg(keyWords, name):
     os.environ['STABILITY_HOST'] = 'grpc.stability.ai:443'
 
-    os.environ['STABILITY_KEY'] = 'sk-ZW2FwVJtzNT6wlBdQEw7vAcpVLHXXzwgIeGwA3A5aaOvvUt1'
+    os.environ['STABILITY_KEY'] = 'sk-D5RHAieHRtzjQoDP2eVY2RPLf3heqHJa85lQg66PxZyMSWCE'
 
     stability_api = client.StabilityInference(
         key=os.environ['STABILITY_KEY'],
@@ -96,20 +95,32 @@ app.secret_key = "12345678"
 
 @app.route('/img', methods=['GET', 'POST'])
 def find_img():
+    msg = ""
     if request.method == 'POST':
 
         name = request.form.get('name')
 
         song_lyrics = Lyrics(name)
         if song_lyrics == "No lyrics found":
-            return render_template("lyrics_search.html", msg=f"{song_lyrics}")
+            return render_template("home.html", msg=f"{song_lyrics}")
         else:
             im = getImg(song_lyrics, name)
             data = io.BytesIO()
             im.save(data, "JPEG")
             encoded_img_data = base64.b64encode(data.getvalue())
 
-            return render_template("home.html", msg=f"{song_lyrics}", img_data=encoded_img_data.decode('utf-8'))
+            try:
+                mycursor.execute("INSERT INTO images (name,username,img) VALUES (%s,%s,%s)", (name, session['username'], encoded_img_data))
+                mydb.commit()
+                print("Insertion successfull")
+            except mysql.connector.Error as err:
+                print( "Something went wrong: {}".format(err))
+
+
+
+
+            return render_template("home.html",  msg=f"{song_lyrics}", img_data=encoded_img_data.decode('utf-8'))
+
     return render_template("home.html")
 
 
@@ -120,19 +131,17 @@ def login():
         username = request.form.get("username")
         password = request.form.get("password")
 
-        mycursor.execute("SELECT * FROM Users WHERE Username = %s AND password = %s", (username, password))
+        mycursor.execute("SELECT * FROM Users WHERE Username = %s", (username, ))
         account = mycursor.fetchone()
         if account:
             session['loggedin'] = True
             session['username'] = username
-            session['password'] = password
+
             msg = 'Logged in successfully!'
             return redirect('/home')
         else:
 
             msg = 'Incorrect username/password!'
-
-        print(username, password)
     return render_template('login.html', msg=msg)
 
 
@@ -178,6 +187,19 @@ def signup():
             msg = 'Sign up successfully proceed to login'
 
     return render_template("signup.html",msg= msg)
+
+@app.route('/library')
+def library():
+ return
+
+
+def addUserImg(name, user_id, img):
+    try:
+        mycursor.execute("INSERT INTO images (name,username,img) VALUES (%s,%s,%s)", (id, name, user_id,img))
+        mydb.commit()
+        return "Insertion successfull"
+    except mysql.connector.Error as err:
+        return "Something went wrong: {}".format(err)
 
 
 if __name__ == "__main__":
