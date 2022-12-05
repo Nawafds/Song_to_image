@@ -129,10 +129,15 @@ def login():
     msg = ""
     if request.method == 'POST':
         username = request.form.get("username")
+        username = username.strip()
         password = request.form.get("password")
+
+        print(username)
+        print(password)
 
         mycursor.execute("SELECT * FROM Users WHERE Username = %s", (username, ))
         account = mycursor.fetchone()
+        print(account)
         if account:
             session['loggedin'] = True
             session['username'] = username
@@ -162,9 +167,8 @@ def home():
 @app.route('/profile')
 def profile():
     if 'loggedin' in session:
-        mycursor.execute("SELECT * FROM Users WHERE Username = %s AND password = %s", (session["username"], session['password']))
+        mycursor.execute("SELECT * FROM Users WHERE Username = %s", (session["username"],))
         account = mycursor.fetchone()
-        print(account[0])
 
         return render_template('profile.html', username=account[0], password = account[1], email = account[2])
     return redirect(url_for('login'))
@@ -185,12 +189,21 @@ def signup():
             mycursor.execute("INSERT INTO Users (Username, password, email) VALUES (%s,%s,%s)", (username,password, email))
             mydb.commit()
             msg = 'Sign up successfully proceed to login'
+            return redirect("/")
 
     return render_template("signup.html",msg= msg)
 
 @app.route('/library')
 def library():
- return
+    mycursor.execute("SELECT img FROM images WHERE username = %s;", (session['username'],))
+    records = mycursor.fetchall()
+    # result = ""
+    # for i in records:
+    #     result +=  '<img id="picture" src="data:image/jpeg;base64,' + i[0].decode('utf-8')+ '">'
+
+
+
+    return render_template("library.html",data =records)
 
 
 def addUserImg(name, user_id, img):
