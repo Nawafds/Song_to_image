@@ -23,6 +23,7 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
+
 def Lyrics(song):
     artist = ""
     url = f"http://api.musixmatch.com/ws/1.1/track.search?q_artist={artist}&page_size=1&page=1&s_track_rating=desc&apikey=b653a9863936de49ed3087828dcafe54&q_track={song}"
@@ -77,7 +78,6 @@ def getImg(keyWords, name):
         seed=34567,
         steps=30, )
 
-
     for resp in answers:
         for artifact in resp.artifacts:
             if artifact.finish_reason == generation.FILTER:
@@ -110,18 +110,17 @@ def find_img():
             encoded_img_data = base64.b64encode(data.getvalue())
 
             try:
-                mycursor.execute("INSERT INTO images (name,username,img) VALUES (%s,%s,%s)", (name, session['username'], encoded_img_data))
+                mycursor.execute("INSERT INTO images (name,username,img) VALUES (%s,%s,%s)",
+                                 (name, session['username'], encoded_img_data))
                 mydb.commit()
                 print("Insertion successfull")
             except mysql.connector.Error as err:
-                print( "Something went wrong: {}".format(err))
+                print("Something went wrong: {}".format(err))
 
+            return render_template("home.html", msg=f"{song_lyrics}", img_data=encoded_img_data.decode('utf-8'),
+                                   name=name, display="block")
 
-
-
-            return render_template("home.html",  msg=f"{song_lyrics}", img_data=encoded_img_data.decode('utf-8'))
-
-    return render_template("home.html")
+    return render_template("home.html", display="none")
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -135,7 +134,7 @@ def login():
         print(username)
         print(password)
 
-        mycursor.execute("SELECT * FROM Users WHERE Username = %s", (username, ))
+        mycursor.execute("SELECT * FROM Users WHERE Username = %s AND password = %s", (username, password))
         account = mycursor.fetchone()
         print(account)
         if account:
@@ -170,8 +169,9 @@ def profile():
         mycursor.execute("SELECT * FROM Users WHERE Username = %s", (session["username"],))
         account = mycursor.fetchone()
 
-        return render_template('profile.html', username=account[0], password = account[1], email = account[2])
+        return render_template('profile.html', username=account[0], password=account[1], email=account[2])
     return redirect(url_for('login'))
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -186,29 +186,27 @@ def signup():
         if account:
             msg = 'Username already taken!'
         else:
-            mycursor.execute("INSERT INTO Users (Username, password, email) VALUES (%s,%s,%s)", (username,password, email))
+            mycursor.execute("INSERT INTO Users (Username, password, email) VALUES (%s,%s,%s)",
+                             (username, password, email))
             mydb.commit()
             msg = 'Sign up successfully proceed to login'
-            return redirect("/")
 
-    return render_template("signup.html",msg= msg)
+    return render_template("signup.html", msg=msg)
+
 
 @app.route('/library')
 def library():
-    mycursor.execute("SELECT img FROM images WHERE username = %s;", (session['username'],))
+    mycursor.execute("SELECT img, name FROM images WHERE username = %s;", (session['username'],))
     records = mycursor.fetchall()
-    # result = ""
-    # for i in records:
-    #     result +=  '<img id="picture" src="data:image/jpeg;base64,' + i[0].decode('utf-8')+ '">'
-
-
-
-    return render_template("library.html",data =records)
+    result = []
+    for i in range(len(records)):
+        result.append([records[i], i])
+    return render_template("library.html", data=result)
 
 
 def addUserImg(name, user_id, img):
     try:
-        mycursor.execute("INSERT INTO images (name,username,img) VALUES (%s,%s,%s)", (id, name, user_id,img))
+        mycursor.execute("INSERT INTO images (name,username,img) VALUES (%s,%s,%s)", (id, name, user_id, img))
         mydb.commit()
         return "Insertion successfull"
     except mysql.connector.Error as err:

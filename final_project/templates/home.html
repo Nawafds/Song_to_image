@@ -1,31 +1,59 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title>Home</title>
-        <link rel="stylesheet" href="../static/style/style.css">
-		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
-	</head>
-	<body class="loggedin">
-		<nav class="navtop">
-			<div>
-				<h1>Lyrify</h1>
-                <a href="{{ url_for('home') }}"><i class="fas fa-home"></i>Home</a>
-				<a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i>Profile</a>
-                <a href="{{ url_for('library') }}"><i class="fa-duotone fa-image"></i>Library</a>
-				<a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
-			</div>
-		</nav>
-			<div class="login">
-			<h1>Search for a Song</h1>
+<head>
+    <meta charset="utf-8">
+    <title>Home</title>
+    <link rel="stylesheet" href="../static/style/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+    {#    <script>#}
+    {#        function showFunction() {#}
+    {#            document.getElementById("image_result").style.display = "block";#}
+    {#        }#}
+    {#    </script>#}
+</head>
+<body class="loggedin">
+<nav class="navtop">
+    <div>
+        <h1>Lyrify</h1>
+        <a href="{{ url_for('home') }}"><i class="fas fa-home"></i>Home</a>
+        <a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i>Profile</a>
+        <a href="{{ url_for('library') }}"><i class="fa-duotone fa-image"></i>Library</a>
+        <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
+    </div>
+</nav>
+<div class="login">
+    <h1>Search for a Song</h1>
 
-			<form method="post">
-				<input type="text" name="name" placeholder="Type a song name" id="username" required>
-				<div class="msg">{{ msg }}</div>
-				<input type="submit" value="Search">
-			</form>
-		</div>
-        <img id="picture" src="data:image/jpeg;base64,{{ img_data }}">
+    <form method="post">
+        <input type="text" name="name" placeholder="Type a song name" id="username" required>
+        <input type="submit" value="Search" onclick="showFunction()">
+    </form>
+</div>
+<div class="content">
 
-	</body>
+    <div style="display:{{ display }};" id="image_result">
+        <p>Your song details are below:</p>
+        <table>
+            <tr>
+                <td>Song name:</td>
+                <td>{{ name }}</td>
+            </tr>
+
+            <tr>
+                <td>Lyrics:</td>
+                <td>{{ msg }}</td>
+            </tr>
+
+            <tr>
+                <td>AI generated image:</td>
+                <td><img id="picture" src="data:image/jpeg;base64,{{ img_data }}"></td>
+            </tr>
+
+        </table>
+    </div>
+
+
+</div>
+
+</body>
 </html>

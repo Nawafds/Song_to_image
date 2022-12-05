@@ -2,8 +2,11 @@
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <title>Library</title>
     <link rel="stylesheet" href="../static/style/style.css">
+    <link rel="stylesheet" href="../static/style/imgstyle.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
 </head>
 <body class="loggedin">
@@ -15,14 +18,50 @@
         <a href="{{ url_for('library') }}"><i class="fa-solid fa-image"></i>library</a>
         <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
 
-
     </div>
 </nav>
-<h2>Library</h2>
-<div id='info_section'>
-    {% for i in data %}
-        <img id="picture" src="data:image/jpeg;base64,{{ i[0].decode('utf-8') }}">
-    {% endfor %}
+<div class="content">
+    <h2>Library</h2>
+
+    <div id='info_section'>
+        <div class="row">
+            {% for i in data %}
+                <div class="column">
+                    <img id="picture" src="data:image/jpeg;base64,{{ i[0][0].decode('utf-8') }}" style="width:100%"
+                         onclick="openModal();currentSlide({{ i[1] + 1 }})"
+                         class="hover-shadow cursor">
+                </div>
+            {% endfor %}
+        </div>
+
+        <div id="myModal" class="modal">
+            <span class="close cursor" onclick="closeModal()">&times;</span>
+            <div class="modal-content">
+
+                {% for i in data %}
+                    <div class="mySlides">
+                        <img id="picture" src="data:image/jpeg;base64,{{ i[0][0].decode('utf-8') }}" style="width:100%">
+                    </div>
+                {% endfor %}
+
+                <a class="prev" onclick="plusSlides(-1)">&#10094;</a>
+                <a class="next" onclick="plusSlides(1)">&#10095;</a>
+
+                <div class="caption-container">
+                    <p id="caption"></p>
+                </div>
+
+                {% for i in data %}
+                    <div class="column">
+                        <img id="picture" class="demo cursor" src="data:image/jpeg;base64,{{ i[0][0].decode('utf-8') }}"
+                             style="width:100%" onclick="currentSlide({{ i[1] + 1 }})"
+                             alt="{{ i[0][1] }}">
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <script src="../static/js/imgjs.js"></script>
+    </div>
 </div>
 </body>
 </html>
