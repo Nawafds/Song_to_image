@@ -1,11 +1,9 @@
-from flask import Flask, request, render_template, redirect, session
+from flask import Flask, request, render_template, redirect, session, url_for
 import json
 import requests
 import getpass, os
 import io
 import base64
-import io
-import os
 import warnings
 from IPython.display import display
 from PIL import Image
@@ -13,6 +11,11 @@ from stability_sdk import client
 import stability_sdk.interfaces.gooseai.generation.generation_pb2 as generation
 import mysql.connector
 from mysql.connector import Error
+import pathlib
+from google.oauth2 import id_token
+from google_auth_oauthlib.flow import Flow
+from pip._vendor import cachecontrol
+import google.auth.transport.requests as g
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -22,6 +25,22 @@ mydb = mysql.connector.connect(
 )
 
 mycursor = mydb.cursor()
+
+app = Flask(__name__)
+
+# app.secret_key = os.environ.get("FN_FLASK_SECRET_KEY", default=False)
+app.secret_key = "12345"
+
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+GOOGLE_CLIENT_ID = "940761290205-s8u2blg6v6vfhp7ipv2lv7qqu2n7eth6.apps.googleusercontent.com"
+client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
+flow = Flow.from_client_secrets_file(
+    client_secrets_file=client_secrets_file,
+    scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",
+            "openid"],
+    redirect_uri="http://127.0.0.1:5000/callback"
+)
 
 
 def Lyrics(song):
@@ -88,11 +107,6 @@ def getImg(keyWords, name):
                 return Image.open(io.BytesIO(artifact.binary))
 
 
-app = Flask(__name__)
-
-app.secret_key = "12345678"
-
-
 @app.route('/img', methods=['GET', 'POST'])
 def find_img():
     msg = ""
@@ -125,14 +139,12 @@ def find_img():
 
 @app.route('/', methods=['GET', 'POST'])
 def login():
+    # return redirect(url_for("google.login"))
     msg = ""
     if request.method == 'POST':
         username = request.form.get("username")
         username = username.strip()
         password = request.form.get("password")
-
-        print(username)
-        print(password)
 
         mycursor.execute("SELECT * FROM Users WHERE Username = %s AND password = %s", (username, password))
         account = mycursor.fetchone()
@@ -147,7 +159,6 @@ def login():
 
             msg = 'Incorrect username/password!'
     return render_template('login.html', msg=msg)
-
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -169,7 +180,7 @@ def profile():
         mycursor.execute("SELECT * FROM Users WHERE Username = %s", (session["username"],))
         account = mycursor.fetchone()
 
-        return render_template('profile.html', username=account[0], password=account[1], email=account[2])
+        return render_template('profile.html', username=account[0], email=account[2])
     return redirect(url_for('login'))
 
 
@@ -182,9 +193,16 @@ def signup():
         email = request.form.get("email")
 
         mycursor.execute("SELECT * FROM Users WHERE Username = %s", (username,))
-        account = mycursor.fetchone()
-        if account:
+        check_username = mycursor.fetchone()
+
+        mycursor.execute("SELECT * FROM Users WHERE email = %s", (email,))
+        check_email = mycursor.fetchone()
+
+        if check_username:
             msg = 'Username already taken!'
+
+        elif check_email:
+            msg = 'Email already registered'
         else:
             mycursor.execute("INSERT INTO Users (Username, password, email) VALUES (%s,%s,%s)",
                              (username, password, email))
@@ -202,6 +220,54 @@ def library():
     for i in range(len(records)):
         result.append([records[i], i])
     return render_template("library.html", data=result)
+
+
+@app.route('/google')
+def google():
+    authorization_url, state = flow.authorization_url()
+    session["state"] = state
+    print(authorization_url, state)
+    return redirect(authorization_url)
+
+
+@app.route('/callback')
+def callback():
+    flow.fetch_token(authorization_response=request.url)
+
+    if not session["state"] == request.args["state"]:
+        abort(500)  # State does not match!
+
+    credentials = flow.credentials
+    request_session = requests.session()
+    cached_session = cachecontrol.CacheControl(request_session)
+    token_request = g.Request(session=cached_session)
+
+    id_info = id_token.verify_oauth2_token(
+        id_token=credentials._id_token,
+        request=token_request,
+        audience=GOOGLE_CLIENT_ID
+    )
+    email = id_info.get("email")
+    username = email.split("@")[0]
+
+    mycursor.execute("SELECT * FROM Users WHERE Username = %s", (username,))
+    check_username = mycursor.fetchone()
+
+    if check_username:
+        session['loggedin'] = True
+        session['username'] = username
+
+        msg = 'Logged in successfully!'
+        return redirect('/home')
+    else:
+        mycursor.execute("INSERT INTO Users (Username, password, email) VALUES (%s,%s,%s)",
+                         (username, "signed in using google", email))
+        mydb.commit()
+        session['loggedin'] = True
+        session['username'] = username
+
+        msg = 'Logged in successfully!'
+        return redirect('/home')
 
 
 def addUserImg(name, user_id, img):
