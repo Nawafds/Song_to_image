@@ -32,9 +32,9 @@
 <div class="content">
 
     <div style="display:{{ display }};" id="image_result">
-        <p>Your song details are below:</p>
+        <p style="display:{{ nolyrics }};">Your song details are below:</p>
         <table>
-            <tr>
+            <tr style="display:{{ nolyrics }};">
                 <td>Song name:</td>
                 <td>{{ name }}</td>
             </tr>
@@ -44,7 +44,7 @@
                 <td>{{ msg }}</td>
             </tr>
 
-            <tr>
+            <tr style="display:{{ nolyrics }};">
                 <td>AI generated image:</td>
                 <td><img id="picture" src="data:image/jpeg;base64,{{ img_data }}"></td>
             </tr>

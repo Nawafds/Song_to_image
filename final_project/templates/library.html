@@ -30,6 +30,13 @@
                     <img id="picture" src="data:image/jpeg;base64,{{ i[0][0].decode('utf-8') }}" style="width:100%"
                          onclick="openModal();currentSlide({{ i[1] + 1 }})"
                          class="hover-shadow cursor">
+
+                    <form style="margin-top: 10px" method="post" action="{{ url_for('delete') }}">
+                        <input type="hidden" name="delete" value="{{ i[0][2] }}"/>
+                        <input type="submit" value="Delete"/>
+                    </form>
+
+
                 </div>
             {% endfor %}
         </div>
@@ -41,6 +48,8 @@
                 {% for i in data %}
                     <div class="mySlides">
                         <img id="picture" src="data:image/jpeg;base64,{{ i[0][0].decode('utf-8') }}" style="width:100%">
+
+
                     </div>
                 {% endfor %}
 

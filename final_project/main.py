@@ -16,6 +16,7 @@ from google.oauth2 import id_token
 from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests as g
+import lyricsgenius
 
 mydb = mysql.connector.connect(
     host="localhost",
@@ -44,43 +45,18 @@ flow = Flow.from_client_secrets_file(
 
 
 def Lyrics(song):
-    artist = ""
-    url = f"http://api.musixmatch.com/ws/1.1/track.search?q_artist={artist}&page_size=1&page=1&s_track_rating=desc&apikey=b653a9863936de49ed3087828dcafe54&q_track={song}"
+    print(song)
+    token = '6hIJ54nrVtypqwWkecZ2di-rpa2bMBMhVMbgTpJn6XFL0pqbuRlMw8knuT6_iZXs'
+    genius = lyricsgenius.Genius(token)
 
-    payload = {}
-    headers = {}
+    song = genius.search_song(song)
+    result = song.lyrics
+    index = result.index('Lyrics')
+    print(song.lyrics)
 
-    response = requests.request("GET", url, headers=headers, data=payload)
-
-    getTrackId = json.loads(response.text)
-
-    if (int(getTrackId["message"]["header"]["available"]) == 0):
+    if song == None:
         return "No lyrics found"
-
-    getTrackId = int(getTrackId["message"]["body"]["track_list"][0]["track"]["track_id"])
-    url = f"http://api.musixmatch.com/ws/1.1/track.lyrics.get?track_id={getTrackId}&apikey=b653a9863936de49ed3087828dcafe54"
-
-    payload = {}
-    headers = {}
-
-    response = requests.request("GET", url, headers=headers, data=payload)
-
-    getLyrics = json.loads(response.text)
-
-    if int(getLyrics["message"]["header"]["status_code"]) != 200:
-        return "No lyrics found"
-
-    getLyrics = getLyrics["message"]["body"]["lyrics"]["lyrics_body"]
-
-    result = ""
-    for i in getLyrics:
-        if i == ".":
-            result = result[0:len(result) - 1]
-            result += "."
-            break
-        else:
-            result += i
-    return result
+    return song.lyrics[index + 6:1200]
 
 
 def getImg(keyWords, name):
@@ -113,10 +89,11 @@ def find_img():
     if request.method == 'POST':
 
         name = request.form.get('name')
-
+        print(name)
         song_lyrics = Lyrics(name)
+        print(song_lyrics)
         if song_lyrics == "No lyrics found":
-            return render_template("home.html", msg=f"{song_lyrics}")
+            return render_template("home.html", msg=f"{song_lyrics}", nolyrics="none")
         else:
             im = getImg(song_lyrics, name)
             data = io.BytesIO()
@@ -159,6 +136,7 @@ def login():
 
             msg = 'Incorrect username/password!'
     return render_template('login.html', msg=msg)
+
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
@@ -214,7 +192,7 @@ def signup():
 
 @app.route('/library')
 def library():
-    mycursor.execute("SELECT img, name FROM images WHERE username = %s;", (session['username'],))
+    mycursor.execute("SELECT img, name, id FROM images WHERE username = %s;", (session['username'],))
     records = mycursor.fetchall()
     result = []
     for i in range(len(records)):
@@ -268,6 +246,16 @@ def callback():
 
         msg = 'Logged in successfully!'
         return redirect('/home')
+
+
+@app.route('/delete', methods=['GET', 'POST'])
+def delete():
+    if request.method == 'POST':
+        id = request.form.get('delete')
+        mycursor.execute("DELETE FROM images WHERE id = %s;", (id,))
+        mydb.commit()
+
+    return redirect('/library')
 
 
 def addUserImg(name, user_id, img):

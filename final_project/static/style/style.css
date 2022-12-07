@@ -222,3 +222,15 @@ body.loggedin {
     .google-btn:active {
       background: #1669f2;
     }
+
+
+    .deletebutton{
+    width: 30%;
+    padding: 15px;
+    background-color: #3274d6;
+    border: 0;
+    cursor: pointer;
+    font-weight: bold;
+    color: #ffffff;
+    transition: background-color 0.2s;
+    }
