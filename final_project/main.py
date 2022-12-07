@@ -45,40 +45,35 @@ flow = Flow.from_client_secrets_file(
 
 
 def Lyrics(song):
-    print(song)
     token = '6hIJ54nrVtypqwWkecZ2di-rpa2bMBMhVMbgTpJn6XFL0pqbuRlMw8knuT6_iZXs'
     genius = lyricsgenius.Genius(token)
 
-    song = genius.search_song(song)
-    result = song.lyrics
-    index = result.index('Lyrics')
-    print(song.lyrics)
+    try:
+        song = genius.search_song(song)
+        result = song.lyrics
+        index = result.index('Lyrics')
 
-    if song == None:
-        return "No lyrics found"
-    return song.lyrics[index + 6:1200]
+        if song == None:
+            return "No lyrics found"
+        return song.lyrics[index + 6:1000]
+    except:
+        return "An error occured trying again"
 
 
-def getImg(keyWords, name):
+def getImg(keyWords):
     os.environ['STABILITY_HOST'] = 'grpc.stability.ai:443'
-
     os.environ['STABILITY_KEY'] = 'sk-D5RHAieHRtzjQoDP2eVY2RPLf3heqHJa85lQg66PxZyMSWCE'
-
     stability_api = client.StabilityInference(
         key=os.environ['STABILITY_KEY'],
         verbose=True, )
-
     answers = stability_api.generate(
         prompt=keyWords,
         seed=34567,
         steps=30, )
-
     for resp in answers:
         for artifact in resp.artifacts:
             if artifact.finish_reason == generation.FILTER:
-                warnings.warn(
-                    "Your request activated the API's safety filters and could not be processed."
-                    "Please modify the prompt and try again.")
+                return "Error"
             if artifact.type == generation.ARTIFACT_IMAGE:
                 return Image.open(io.BytesIO(artifact.binary))
 
@@ -89,27 +84,26 @@ def find_img():
     if request.method == 'POST':
 
         name = request.form.get('name')
-        print(name)
         song_lyrics = Lyrics(name)
-        print(song_lyrics)
-        if song_lyrics == "No lyrics found":
+
+        if song_lyrics == "No lyrics found" or song_lyrics == "An error occured trying again":
             return render_template("home.html", msg=f"{song_lyrics}", nolyrics="none")
         else:
-            im = getImg(song_lyrics, name)
-            data = io.BytesIO()
-            im.save(data, "JPEG")
-            encoded_img_data = base64.b64encode(data.getvalue())
 
-            try:
+            im = getImg(song_lyrics)
+            if im == "Error":
+                song_lyrics = "Explicit content filter activated try another song"
+                return render_template("home.html", msg=f"{song_lyrics}", nolyrics="none")
+            else:
+                data = io.BytesIO()
+                im.save(data, "JPEG")
+                encoded_img_data = base64.b64encode(data.getvalue())
                 mycursor.execute("INSERT INTO images (name,username,img) VALUES (%s,%s,%s)",
                                  (name, session['username'], encoded_img_data))
                 mydb.commit()
-                print("Insertion successfull")
-            except mysql.connector.Error as err:
-                print("Something went wrong: {}".format(err))
 
-            return render_template("home.html", msg=f"{song_lyrics}", img_data=encoded_img_data.decode('utf-8'),
-                                   name=name, display="block")
+                return render_template("home.html", msg=f"{song_lyrics}", img_data=encoded_img_data.decode('utf-8'),
+                                       name=name, display="block")
 
     return render_template("home.html", display="none")
 
@@ -125,7 +119,6 @@ def login():
 
         mycursor.execute("SELECT * FROM Users WHERE Username = %s AND password = %s", (username, password))
         account = mycursor.fetchone()
-        print(account)
         if account:
             session['loggedin'] = True
             session['username'] = username
@@ -204,7 +197,6 @@ def library():
 def google():
     authorization_url, state = flow.authorization_url()
     session["state"] = state
-    print(authorization_url, state)
     return redirect(authorization_url)
 
 
