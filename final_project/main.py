@@ -17,11 +17,14 @@ from google_auth_oauthlib.flow import Flow
 from pip._vendor import cachecontrol
 import google.auth.transport.requests as g
 import lyricsgenius
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="12345678",
+    password= os.getenv('DB_PASSWORD'),
     database="SongToImgDB"
 )
 
@@ -30,22 +33,20 @@ mycursor = mydb.cursor()
 app = Flask(__name__)
 
 # app.secret_key = os.environ.get("FN_FLASK_SECRET_KEY", default=False)
-app.secret_key = "12345"
+app.secret_key = os.getenv('APP_SECRET_KEY')
 
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
-GOOGLE_CLIENT_ID = "940761290205-s8u2blg6v6vfhp7ipv2lv7qqu2n7eth6.apps.googleusercontent.com"
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
 flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
-    scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email",
-            "openid"],
-    redirect_uri="http://127.0.0.1:5000/callback"
+    scopes=["https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/userinfo.email", "openid"], redirect_uri="http://127.0.0.1:5000/callback"
 )
 
 
 def Lyrics(song):
-    token = '6hIJ54nrVtypqwWkecZ2di-rpa2bMBMhVMbgTpJn6XFL0pqbuRlMw8knuT6_iZXs'
+    token = os.getenv('GENIUS_TOKEN')
     genius = lyricsgenius.Genius(token)
 
     try:
@@ -62,7 +63,7 @@ def Lyrics(song):
 
 def getImg(keyWords):
     os.environ['STABILITY_HOST'] = 'grpc.stability.ai:443'
-    os.environ['STABILITY_KEY'] = 'sk-D5RHAieHRtzjQoDP2eVY2RPLf3heqHJa85lQg66PxZyMSWCE'
+    os.environ['STABILITY_KEY'] = os.getenv('IMG_TOKEN')
     stability_api = client.StabilityInference(
         key=os.environ['STABILITY_KEY'],
         verbose=True, )
