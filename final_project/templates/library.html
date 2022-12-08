@@ -15,7 +15,7 @@
         <h1>Lyrify</h1>
         <a href="{{ url_for('home') }}"><i class="fas fa-home"></i>Home</a>
         <a href="{{ url_for('profile') }}"><i class="fas fa-user-circle"></i>Profile</a>
-        <a href="{{ url_for('library') }}"><i class="fa-solid fa-image"></i>library</a>
+        <a href="{{ url_for('library') }}"><i class="fa-solid fa-image"></i>Library</a>
         <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i>Logout</a>
 
     </div>
@@ -31,9 +31,11 @@
                          onclick="openModal();currentSlide({{ i[1] + 1 }})"
                          class="hover-shadow cursor">
 
-                    <form style="margin-top: 10px" method="post" action="{{ url_for('delete') }}">
+                    <form class="deletebutton" style="margin-top: 10px" method="post" action="{{ url_for('delete') }}">
                         <input type="hidden" name="delete" value="{{ i[0][2] }}"/>
-                        <input type="submit" value="Delete"/>
+                        <input style="background-color: Transparent;
+background-repeat:no-repeat;
+border: none;" class="deletetext" type="submit" value="Delete"/>
                     </form>
 
 

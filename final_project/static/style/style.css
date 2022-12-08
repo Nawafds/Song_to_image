@@ -10,7 +10,7 @@
 }
 
 body {
-    background-color: #435165;
+    background-color: #400707;
     margin: 0;
 }
 
@@ -47,8 +47,8 @@ body {
 }
 
 .login .links a.active, .register .links a.active {
-    border-bottom: 3px solid #3274d6;
-    color: #3274d6;
+    border-bottom: 3px solid #af1717;
+    color: #af1717;
 }
 
 .login form, .register form {
@@ -64,7 +64,7 @@ body {
     align-items: center;
     width: 50px;
     height: 50px;
-    background-color: #3274d6;
+    background-color: #af1717;
     color: #ffffff;
 }
 
@@ -80,7 +80,7 @@ body {
     width: 100%;
     padding: 15px;
     margin-top: 20px;
-    background-color: #3274d6;
+    background-color: #af1717;
     border: 0;
     cursor: pointer;
     font-weight: bold;
@@ -94,7 +94,7 @@ body {
 }
 
 .navtop {
-    background-color: #2f3947;
+    background-color: #7f0f0f;
     height: 60px;
     width: 100%;
     border: 0;
@@ -185,9 +185,9 @@ body.loggedin {
       background-color: beige;
     }
     .google-btn {
-      width: 210px;
+      width: 222px;
       height: 42px;
-      background-color: #4285f4;
+      background-color: #af1717;
       border-radius: 2px;
       box-shadow: 0 3px 4px 0 rgba(0, 0, 0, 0.25);
       display: block;
@@ -234,3 +234,29 @@ body.loggedin {
     color: #ffffff;
     transition: background-color 0.2s;
     }
+
+
+
+
+    .deletebutton .deletetext {
+        float: right;
+    color: #fff;
+    font-size: 14px;
+    letter-spacing: 0.2px;
+    font-family: "Roboto";
+    margin-right: 12%;
+}
+
+
+
+.deletebutton {
+    width: 100px;
+    height: 45px;
+    background-color: #af1717;
+    border-radius: 2px;
+    box-shadow: 0 3px 4px 0 rgb(0 0 0 / 25%);
+    display: block;
+        margin-left: 27%;
+}
+
+
