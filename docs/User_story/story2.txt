@@ -3,7 +3,7 @@ Library access story:
 Once logged in (as mentioned in the sign-in/ signup stories), a bar will appear on top of the page displaying the name of the website
 on the top left corner, and “Home,” “Profile”, “Library”, and “Logout” on the other side. By clicking on the library button, the user
 will be redirected to another page with all the generated pictures and a delete button below each picture. The pictures will be sorted
-by date and time, where the most recent picture will be on the top left - like Instagram, for example. When a picture is clicked, it will
+by date and time, where the most recent picture will on the bottom of the page. When a picture is clicked, it will
 expand, and the song title will appear under the picture. Also, the rest of the pictures in the library will be minimized and clickable
 and will appear below the currently previewed picture. By clicking on one of the minimized pictures, the one clicked on will expand and
 the previous picture will be minimized. The system’s default saving and sharing options will appear if the user right-clicks any picture.
