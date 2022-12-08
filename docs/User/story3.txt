@@ -1,6 +1,9 @@
 Search story 
 
-When the user gains access to their music app account they have the choice to search a song from their playlist or they can 
-search a song that is not saved to their playlist. When the song is found the program will take the lyrics and send them to 
-the AI to produce a picture. If the lyrics are not found then the program will send an error message notifying the user that 
-the lyrics are not found. If the song is not found an error message will show notifying the user that the song is not found. 	
+After gaining access to the program, there will be a search bar titled “Search for a Song” and a search button on the main page.
+By typing the song's name, the user will be directed to another page that shows the song's name, lyrics, and AI-generated picture.
+The generated picture will automatically be saved in the user’s library - as mentioned in the library story. If the user puts a
+name of a song that does not exist or the lyrics are not available, a message will appear and notify the user that the lyrics are
+not available, or an API error will occur. Another case is when the user inputs a song with explicit and inappropriate lyrics;
+an error message will appear indicating that the song violates the guidelines and will not generate an image. Sometimes,
+putting the name of the artist beside the name of the song in the search bar will help locate the exact song.

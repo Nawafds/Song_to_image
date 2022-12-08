@@ -1,9 +1,9 @@
 Sign in story
 
-When the user first accesses the website, there will be a login screen. This will include a space titled 
-“Username or email address” and a space titled “Password” at the top of the screen in which the user can 
-input their login information. If the user has forgotten their username/email, password, or both, there 
-will be a “forgot username/password” button that will take the user to a different screen. This screen will
-allow the user to enter either their email or username and will send an email to the user that allows them to 
-reset their username and/or password. If the user does not already have an account, there will be a button to
-sign up towards the bottom of the screen that is explained in the sign up story later in this document. 
+When the user first accesses the website, there will be two buttons in the middle of the page: Login and Sign Up. 
+The two buttons are displayed together like small tabs. When the user clicks on the Login button, a username and a password space
+will be waiting for the user to type their information, along with a “login” button that will allow the user to access the program
+if their information is correct. Otherwise, an error message will appear, and the user will not be allowed to access the program.
+Also another way the user can choose to log in to the program is by their Google account. Below the username and password blank spaces,
+there will be a “sign in with Google” button, which will take the user to another page to log in with their Google account.
+The user will be transferred to the program’s main page when successfully logged in with their Google account.
