@@ -1,6 +1,6 @@
 Sign up story
 
-When the user first accesses the website there will be a button to sign up and when you click on it you will have 
-a couple of choices to sign up using other 3rd party platforms like spotify, apple, or google. The user will also 
-be able to build their account from scratch. it will prompt them to enter their name, email, program color/theme as
-the user likes. For example, the user can choose the color pink and the website frontend will be pink.    
+If the user does not have an account in Lyrify - our project - nor Google, a Sign up option will be available
+that allows the user to enter their username, password, and email address. Once these spaces are filled,
+the user will see a success message pop out and can go to the login tab, re-enter their information,
+and successfully access the program.   
